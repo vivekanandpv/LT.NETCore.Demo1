@@ -1,4 +1,6 @@
 ﻿using LT.NETCore.Demo1.Models;
+using LT.NETCore.Demo1.Services;
+using LT.NETCore.Demo1.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,39 +14,49 @@ namespace LT.NETCore.Demo1.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
+        private readonly IBookService _bookService;
+
+        public BooksController(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
+
         //  GET: get all
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(new List<Book>());
+            return Ok(_bookService.Get());
         }
 
         //  GET: get with id
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            return Ok(new Book { Id = id, Title = "Learning Asp.Net Core", Description = "Learner's book", Price = 500.50 });
+            return Ok(_bookService.Get(id));
         }
 
         //  POST
         [HttpPost]
-        public IActionResult Create(Book book)
+        public IActionResult Create(BookCreateViewModel viewModel)
         {
-            return Ok(new { Message = "Created", Payload = book });
+            _bookService.Create(viewModel);
+            return Ok();
         }
 
         //  PUT
         [HttpPut]
-        public IActionResult Update(Book book)
+        public IActionResult Update(BookUpdateViewModel viewModel)
         {
-            return Ok(new { Message = "Update", Payload = book });
+            _bookService.Update(viewModel);
+            return Ok();
         }
 
         //  DELETE
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            return Ok(new { Message = $"Deleted successfully: {id}" });
+            _bookService.Delete(id);
+            return Ok();
         }
     }
 }
